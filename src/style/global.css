@@ -1,0 +1,43 @@
+
+body {
+  background-image: url("static://asset/back.webp");
+  background-size: 0 0;
+  width: 100%;
+  height: 100%;
+  position: fixed; 
+  font-size: 2rem;
+  -webkit-app-region: drag;
+}
+
+div {
+  -webkit-app-region: no-drag;
+}
+
+body::before{
+    content: ""; 
+    z-index: -1; 
+    position: inherit;
+    left: inherit;
+    top: inherit;
+    width: inherit;
+    height: inherit;
+    background-position: center;
+    background-image: inherit;
+    background-size: cover;
+    filter: blur(2px);
+    filter: opacity(0.8);
+    /* transition: background-image 0.2s ease-in-out; */
+    /* transition: background-image ease-in-out; */
+    transition-property: background-image;
+    transition-delay: 0ms;
+    transition-duration: 2s;
+    transition-timing-function: ease-in-out;
+
+}
+
+
+@keyframes gradient {
+  from {opacity: 0.2;}
+    to {opacity: 1;}
+}
+
