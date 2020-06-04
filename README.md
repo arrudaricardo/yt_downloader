@@ -11,3 +11,8 @@ Run Project:
 ```bash
 npm i && npm start
 ```
+Make Executable:
+
+```bash
+npm run make
+```
