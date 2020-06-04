@@ -1,4 +1,4 @@
-import { app, BrowserWindow, session, ipcMain } from 'electron';
+import { app, BrowserWindow, session, ipcMain, Notification, dialog } from 'electron';
 import { getInfo, downloadFromInfo } from 'ytdl-core'
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 const fs = require('fs')
@@ -7,7 +7,6 @@ const path = require('path')
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
-
 }
 
 const createWindow = () => {
@@ -17,28 +16,14 @@ const createWindow = () => {
     width: 488,
     frame: false,
     autoHideMenuBar: true,
-    backgroundColor: '#FFF',
+    backgroundColor: '#A9A9A9',
     resizable: false,
     webPreferences: {
       nodeIntegration: true
     }
   });
 
-  ipcMain.handle('getInfo', async (event, arg) => {
-    try {
-      let resp = await getInfo(arg)
-      return resp
-    } catch (e) {
-      return null
-    }
-  })
-
-  ipcMain.handle('downloadFromInfo', async (event, arg) => {
-    let download = downloadFromInfo(arg.info, arg.options)
-    download.pipe((fs.createWriteStream(arg.path)))
-    console.log(download)
-    return JSON.stringify(download)
-  })
+  mainWindow.focus()
 
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -46,6 +31,32 @@ const createWindow = () => {
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 };
+
+ipcMain.handle('getInfo', async (event, arg) => {
+  try {
+    let resp = await getInfo(arg)
+    return resp
+  } catch (e) {
+    return null
+  }
+})
+
+const downloadCompleteNotification = (title: string, body: string, filePath?: string) => {
+  let notification = new Notification({
+    title,
+    body,
+  })
+  notification.show()
+  return
+}
+
+ipcMain.handle('downloadFromInfo', async (event, arg) => {
+  let download = downloadFromInfo(arg.info, arg.options)
+  download.pipe((fs.createWriteStream(arg.path)))
+  downloadCompleteNotification("Download Completed", arg.info.title)
+  return JSON.stringify(download)
+})
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -57,6 +68,7 @@ app.on('ready', () => {
       const filePath = path.join(app.getAppPath(), '.webpack/renderer', fileUrl);
       callback(filePath);
     });
+
 });
 
 // Quit when all windows are closed.
