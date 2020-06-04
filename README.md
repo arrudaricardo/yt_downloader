@@ -1,6 +1,6 @@
 # YT_Downloader
 
-## A straight-foward video downloader application for YouTube
+## straightforward video downloader application for YouTube
 
 [Download]( https://github.com/arrudaricardo/yt_downloader/releases)
 
